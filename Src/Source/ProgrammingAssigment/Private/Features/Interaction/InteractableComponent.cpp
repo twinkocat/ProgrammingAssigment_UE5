@@ -20,7 +20,8 @@ void UInteractableComponent::BeginPlay()
 	CachedOwner = GetOwner();
 }
 
-void UInteractableComponent::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void UInteractableComponent::TickComponent(float DeltaTime, enum ELevelTick TickType,
+                                           FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
@@ -29,41 +30,43 @@ void UInteractableComponent::TickComponent(float DeltaTime, enum ELevelTick Tick
 
 	const FVector TraceEnd = ViewLocation + ViewRotator.Vector() * TraceLength;
 
-	FHitResult HitResult( ForceInit );
-	
-	const bool bHit = TryEvaluateInteractable( HitResult, ViewLocation, TraceEnd );
-	
-	ProcessInteractionHit( HitResult );
+	FHitResult HitResult(ForceInit);
+
+	const bool bHit = TryEvaluateInteractable(HitResult, ViewLocation, TraceEnd);
+
+	ProcessInteractionHit(HitResult);
 }
 
 bool UInteractableComponent::TryEvaluateInteractable(FHitResult& HitResult, const FVector& TraceStart, const FVector& TraceEnd) const
 {
-	const FCollisionQueryParams TraceParams( FName( TEXT( "Trace" ) ), true, CachedOwner );
+	const FCollisionQueryParams TraceParams(FName(TEXT("Trace")), true, CachedOwner);
 
 #if WITH_EDITOR
 	DrawDebugSphere(GetWorld(), TraceEnd, ColliderCheckRadius, 1, FColor::Red, false, 0.25f, 0, 1.f);
 #endif
-	
-	return GetWorld( )->SweepSingleByChannel( HitResult, TraceStart, TraceEnd, FQuat::Identity, ECC_Pawn, FCollisionShape::MakeSphere( ColliderCheckRadius ), TraceParams );
+
+	return GetWorld()->SweepSingleByChannel(HitResult, TraceStart, TraceEnd, FQuat::Identity, ECC_Pawn, FCollisionShape::MakeSphere(ColliderCheckRadius), TraceParams);
 }
 
 void UInteractableComponent::ProcessInteractionHit(const FHitResult& HitResult)
 {
-	AActor* NewLookingObject = HitResult.GetActor() != nullptr && HitResult.GetActor()->Implements<UInteractable>() ? HitResult.GetActor() : nullptr;
-	
-	if ( NewLookingObject != LookingObject )
+	AActor* NewLookingObject = HitResult.GetActor() != nullptr && HitResult.GetActor()->Implements<UInteractable>()
+		                           ? HitResult.GetActor()
+		                           : nullptr;
+
+	if (NewLookingObject != LookingObject)
 	{
-		if ( InteractingObject )
+		if (InteractingObject)
 		{
-			EndInteract( );
+			EndInteract();
 		}
-		
-		if ( LookingObject != nullptr )
+
+		if (LookingObject != nullptr)
 		{
-			IInteractable::Execute_StopLooking( LookingObject, this );
+			IInteractable::Execute_StopLooking(LookingObject, this);
 			LookingObject = nullptr;
 		}
-		
+
 		LookingObject = NewLookingObject;
 
 		if (!LookingObject || !IInteractable::Execute_IsInteractable(LookingObject, this))
@@ -71,20 +74,10 @@ void UInteractableComponent::ProcessInteractionHit(const FHitResult& HitResult)
 			return;
 		}
 
-		if ( LookingObject != nullptr )
+		if (LookingObject != nullptr)
 		{
-			IInteractable::Execute_StartLooking( LookingObject, this );
+			IInteractable::Execute_StartLooking(LookingObject, this);
 		}
-	}
-
-	if ( LookingObject != nullptr )
-	{
-		IInteractable::Execute_Looking( LookingObject, this );
-	}
-
-	if ( InteractingObject != nullptr )
-	{
-		IInteractable::Execute_Interact( InteractingObject, this );
 	}
 }
 
@@ -96,18 +89,18 @@ bool UInteractableComponent::StartInteract()
 	}
 
 	InteractingObject = LookingObject;
-	IInteractable::Execute_StartInteract( InteractingObject, this );
+	IInteractable::Execute_StartInteract(InteractingObject, this);
 	return true;
 }
 
 bool UInteractableComponent::EndInteract()
 {
-	if ( InteractingObject == nullptr )
+	if (InteractingObject == nullptr)
 	{
 		return false;
 	}
 
-	IInteractable::Execute_EndInteract( InteractingObject, this );
+	IInteractable::Execute_EndInteract(InteractingObject, this);
 	InteractingObject = nullptr;
 	return true;
 }

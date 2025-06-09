@@ -28,11 +28,11 @@
         <mxCell id="qKa2N3zLJ_nOPQeqq2Ju-10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="qKa2N3zLJ_nOPQeqq2Ju-9" target="qKa2N3zLJ_nOPQeqq2Ju-7" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="Biyis1XfIowbQT2TmNtX-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="qKa2N3zLJ_nOPQeqq2Ju-9" target="qKa2N3zLJ_nOPQeqq2Ju-20">
+        <mxCell id="Biyis1XfIowbQT2TmNtX-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="1" source="qKa2N3zLJ_nOPQeqq2Ju-9" target="qKa2N3zLJ_nOPQeqq2Ju-20" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="qKa2N3zLJ_nOPQeqq2Ju-9" value="(Actor)&lt;br&gt;InteractableItem" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-          <mxGeometry x="520" y="390" width="120" height="60" as="geometry" />
+          <mxGeometry x="480" y="420" width="120" height="60" as="geometry" />
         </mxCell>
         <mxCell id="qKa2N3zLJ_nOPQeqq2Ju-11" value="ItemData" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="600" y="500" width="170" height="150" as="geometry" />

@@ -3,19 +3,19 @@
 
 #include "ProgrammingAssigment/Public/Characters/PlayerCharacter.h"
 #include "ProgrammingAssigment/Public/Features/Interaction/InteractableComponent.h"
+#include "ProgrammingAssigment/Public/Features/Inventory/InventoryComponent.h"
 
 
 APlayerCharacter::APlayerCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
-
 	InteractableComponent = CreateDefaultSubobject<UInteractableComponent>(TEXT("InteractableComponent"));
+	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComponent"));
 }
 
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 void APlayerCharacter::Tick(float DeltaTime)
@@ -33,3 +33,7 @@ UInteractableComponent* APlayerCharacter::GetInteractableComponent_Implementatio
 	return InteractableComponent;
 }
 
+UInventoryComponent* APlayerCharacter::GetInventoryComponent_Implementation() const
+{
+	return InventoryComponent;
+}

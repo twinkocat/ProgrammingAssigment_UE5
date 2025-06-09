@@ -13,7 +13,7 @@ UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class PROGRAMMINGASSIGMENT_API UInteractableComponent : public UActorComponent
 {
 	GENERATED_BODY()
-	
+
 public:
 	UInteractableComponent();
 
@@ -27,13 +27,13 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	bool TryEvaluateInteractable( FHitResult& HitResult, const FVector& TraceStart, const FVector& TraceEnd ) const;
-	void ProcessInteractionHit( const FHitResult& HitResult );
+	bool TryEvaluateInteractable(FHitResult& HitResult, const FVector& TraceStart, const FVector& TraceEnd) const;
+	void ProcessInteractionHit(const FHitResult& HitResult);
 
-	UPROPERTY( EditAnywhere, BlueprintReadWrite )
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float TraceLength;
 
-	UPROPERTY( EditAnywhere, BlueprintReadWrite )
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float ColliderCheckRadius;
 
 	UPROPERTY(Transient)
