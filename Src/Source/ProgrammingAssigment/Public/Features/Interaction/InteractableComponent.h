@@ -17,18 +17,18 @@ class PROGRAMMINGASSIGMENT_API UInteractableComponent : public UActorComponent
 public:
 	UInteractableComponent();
 
+	UFUNCTION(BlueprintCallable)
+	bool StartInteract();
+
+	UFUNCTION(BlueprintCallable)
+	bool EndInteract();
+	
 protected:
 	virtual void BeginPlay() override;
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	bool TryEvaluateInteractable( FHitResult& HitResult, const FVector& TraceStart, const FVector& TraceEnd ) const;
 	void ProcessInteractionHit( const FHitResult& HitResult );
-
-	UFUNCTION(BlueprintCallable)
-	bool StartInteract();
-
-	UFUNCTION(BlueprintCallable)
-	bool EndInteract();
 
 	UPROPERTY( EditAnywhere, BlueprintReadWrite )
 	float TraceLength;
