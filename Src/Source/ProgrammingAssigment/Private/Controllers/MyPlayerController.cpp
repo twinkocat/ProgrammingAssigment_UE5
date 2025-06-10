@@ -1,8 +1,8 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-#include "ProgrammingAssigment/Public/Controllers/MyPlayerController.h"
-#include "ProgrammingAssigment/Public/Features/Interaction/InteractableComponent.h"
-#include "ProgrammingAssigment/Public/Features/Interaction/IInteractableComponent.h"
+#include "Controllers/MyPlayerController.h"
+#include "Features/Interaction/InteractableComponent.h"
+#include "Features/Interaction/IInteractableComponent.h"
 #include "GameFramework/Character.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"

@@ -1,12 +1,10 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "ProgrammingAssigment/Public/Actors/InteractableItem.h"
-
-#include "Features/Inventory/InventoryDataAsset.h"
-#include "ProgrammingAssigment/Public/Features/Interaction/InteractableComponent.h"
-#include "ProgrammingAssigment/Public/Features/Inventory/IInventoryComponent.h"
-#include "ProgrammingAssigment/Public/Features/Inventory/InventoryComponent.h"
+#include "Actors/InteractableItem.h"
+#include "Features/Interaction/InteractableComponent.h"
+#include "Features/Inventory/IInventoryComponent.h"
+#include "Features/Inventory/InventoryComponent.h"
 
 
 AInteractableItem::AInteractableItem()

@@ -1,7 +1,7 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "ProgrammingAssigment/Public/Features/Inventory/InventoryComponent.h"
+#include "Features/Inventory/InventoryComponent.h"
 
 #include "GameplayTagContainer.h"
 #include "Features/Inventory/InventoryDataAsset.h"

@@ -4,8 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "BaseCharacter.h"
-#include "ProgrammingAssigment/Public/Features/Interaction/IInteractableComponent.h"
-#include "ProgrammingAssigment/Public/Features/Inventory/IInventoryComponent.h"
+#include "Features/Interaction/IInteractableComponent.h"
+#include "Features/Inventory/IInventoryComponent.h"
 #include "PlayerCharacter.generated.h"
 
 class UInteractableComponent;

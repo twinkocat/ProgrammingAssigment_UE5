@@ -1,8 +1,8 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "ProgrammingAssigment/Public/Features/Interaction/InteractableComponent.h"
-#include "ProgrammingAssigment/Public/Features/Interaction/Interactable.h"
+#include "Features/Interaction/InteractableComponent.h"
+#include "Features/Interaction/Interactable.h"
 
 
 UInteractableComponent::UInteractableComponent(): TraceLength(0), ColliderCheckRadius(0), CachedOwner(nullptr),

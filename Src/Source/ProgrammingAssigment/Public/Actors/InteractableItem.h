@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
 #include "GameFramework/Actor.h"
-#include "ProgrammingAssigment/Public/Features/Interaction/Interactable.h"
+#include "Features/Interaction/Interactable.h"
 #include "InteractableItem.generated.h"
 
 UCLASS()

@@ -1,8 +1,7 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "ProgrammingAssigment/Public/Features/Inventory/InventoryItem.h"
-
+#include "Features/Inventory/InventoryItem.h"
 #include "Features/Inventory/InventoryItemCommand.h"
 
 
