@@ -6,12 +6,13 @@
 #include "GameFramework/Character.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
+#include "Characters/PlayerCharacter.h"
 
 
 void AMyPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-	CachedOwner = GetCharacter();
+	CachedOwner = Cast<APlayerCharacter>( GetCharacter());
 }
 
 void AMyPlayerController::SetupInputComponent()

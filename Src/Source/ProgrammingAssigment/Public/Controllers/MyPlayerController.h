@@ -34,7 +34,7 @@ protected:
 	void HandleLook(const FInputActionValue& Value);
 	
 	UPROPERTY(BlueprintReadOnly)
-	ACharacter* CachedOwner;
+	APlayerCharacter* CachedOwner;
 	
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category= "Enhanced Input")

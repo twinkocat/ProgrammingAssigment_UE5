@@ -12,11 +12,11 @@ struct FInventoryItemData;
  * 
  */
 UCLASS()
-class PROGRAMMINGASSIGMENT_API UInventoryDataAsset : public UDataAsset
+class PROGRAMMINGASSIGMENT_API UInventoryDataAsset : public UPrimaryDataAsset
 {
 	GENERATED_BODY()
 public:
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
 	TArray<FInventoryItemData> InventoryData;
 	
 	bool TryGetInventoryData(const FGameplayTag& TargetTag, FInventoryItemData& ItemData);

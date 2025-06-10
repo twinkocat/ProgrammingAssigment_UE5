@@ -18,7 +18,7 @@ void UInventoryComponent::AddItem(const FGameplayTag& ItemTag, const int ItemCou
 {
 	FInventoryItemData ItemData;
 	
-	if (InventoryDataAsset.IsValid() && InventoryDataAsset.Get()->TryGetInventoryData(ItemTag, ItemData))
+	if (InventoryDataAsset.LoadSynchronous()->TryGetInventoryData(ItemTag, ItemData))
 	{
 		for (FInventoryItemWrapper& Element : Items)
 		{
@@ -42,6 +42,37 @@ void UInventoryComponent::AddItem(const FGameplayTag& ItemTag, const int ItemCou
 
 	UE_LOG(LogTemp, Log, TEXT("Added new item '%s' with count: %d"), *NewWrapper.Item->GetItemName().ToString(), NewWrapper.Count);
 }
+
+void UInventoryComponent::UseItem(const FGameplayTag& ItemTag)
+{
+	for (int32 i = 0; i < Items.Num(); ++i)
+	{
+		FInventoryItemWrapper& Element = Items[i];
+
+		if (Element.Item && Element.Tag == ItemTag)
+		{
+			if (Element.Item->IsConsumable())
+			{
+				Element.Count = FMath::Clamp(Element.Count - 1, 0, INT_MAX);
+				UE_LOG(LogTemp, Log, TEXT("Used consumable item: %s, remaining count: %d"), *ItemTag.ToString(), Element.Count);
+				
+				if (Element.Count == 0)
+				{
+					Items.RemoveAt(i);
+					UE_LOG(LogTemp, Log, TEXT("Item %s removed from inventory"), *ItemTag.ToString());
+				}
+			}
+			else
+			{
+				UE_LOG(LogTemp, Log, TEXT("Used non-consumable item: %s"), *ItemTag.ToString());
+			}
+
+			Element.Item->OnUse(this);
+			break;
+		}
+	}
+}
+
 
 void UInventoryComponent::BeginPlay()
 {

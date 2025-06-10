@@ -28,6 +28,9 @@ struct FInventoryItemData
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category="Inventory")
 	int MaxInStack = 99;
 
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category="Inventory")
+	bool Consumable = false;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Inventory")
 	TSoftObjectPtr<UTexture2D> ItemImage = nullptr;
 	
@@ -60,11 +63,15 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category="Inventory")
 	void AddItem(const FGameplayTag& ItemTag, const int ItemCount);
+
+	UFUNCTION(BlueprintCallable, Category="Inventory")
+	void UseItem(const FGameplayTag& ItemTag);
+
 	
 protected:
 	virtual void BeginPlay() override;
 
-	UPROPERTY(BlueprintReadOnly, Category="Inventory")
+	UPROPERTY(BlueprintReadWrite, Category="Inventory")
 	TArray<FInventoryItemWrapper> Items;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Inventory")

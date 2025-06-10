@@ -11,19 +11,23 @@ class UInventoryComponent;
 /**
  * 
  */
-UCLASS()
+UCLASS(BlueprintType)
 class PROGRAMMINGASSIGMENT_API UInventoryItem : public UObject
 {
 	GENERATED_BODY()
-
-	
-	FInventoryItemData ItemData;
 
 public:
 	void OnUse(UInventoryComponent* InventoryComponent);
 	void OnDrop(UInventoryComponent* InventoryComponent);
 
 	FORCEINLINE FText GetItemName() const { return ItemData.Name; };
+
+	FORCEINLINE bool IsConsumable() const { return ItemData.Consumable; }
 	
 	static UInventoryItem* Create(const FInventoryItemData& ItemData);
+
+protected:
+	
+	UPROPERTY(BlueprintReadOnly, Category="Inventory")
+	FInventoryItemData ItemData;
 };
