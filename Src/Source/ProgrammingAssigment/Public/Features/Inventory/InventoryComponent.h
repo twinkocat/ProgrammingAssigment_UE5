@@ -53,6 +53,23 @@ struct FInventoryItemWrapper
 	int Count = 0;
 };
 
+USTRUCT(BlueprintType)
+struct FAddedItemInfo
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadOnly)
+	FText Name = FText();
+
+	UPROPERTY(BlueprintReadOnly)
+	TSoftObjectPtr<UTexture2D> Image = nullptr;
+
+	UPROPERTY(BlueprintReadOnly)
+	int Count = 0;
+};
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnItemAdded, FAddedItemInfo, Info);
+
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class PROGRAMMINGASSIGMENT_API UInventoryComponent : public UActorComponent
 {
@@ -67,6 +84,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Inventory")
 	void UseItem(const FGameplayTag& ItemTag);
 
+	UPROPERTY(BlueprintAssignable, Category="Inventory")
+	FOnItemAdded OnItemAdded;
 	
 protected:
 	virtual void BeginPlay() override;

@@ -20,6 +20,12 @@ void UInventoryComponent::AddItem(const FGameplayTag& ItemTag, const int ItemCou
 	
 	if (InventoryDataAsset.LoadSynchronous()->TryGetInventoryData(ItemTag, ItemData))
 	{
+		FAddedItemInfo AddedItemInfo;
+		AddedItemInfo.Name = ItemData.Name;
+		AddedItemInfo.Image = ItemData.ItemImage;
+		AddedItemInfo.Count = ItemCount;
+		OnItemAdded.Broadcast(AddedItemInfo);
+		
 		for (FInventoryItemWrapper& Element : Items)
 		{
 			if (Element.Item && Element.Tag == ItemTag)
