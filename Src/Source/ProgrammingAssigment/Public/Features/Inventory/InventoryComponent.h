@@ -17,22 +17,22 @@ struct FInventoryItemData
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Inventory", meta=(Categories="Item"))
-	FGameplayTag Tag;
+	FGameplayTag Tag = FGameplayTag::EmptyTag;
 	
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category="Inventory")
-	FText Name;
+	FText Name = FText::FromString("Item Name");
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category="Inventory", meta=(MultiLine=true))
-	FText Description;
+	FText Description = FText::FromString("Item Description");
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category="Inventory")
 	int MaxInStack = 99;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Inventory")
-	TSoftObjectPtr<UTexture2D> ItemImage;
+	TSoftObjectPtr<UTexture2D> ItemImage = nullptr;
 	
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Instanced, Category="Inventory")
-	TArray<UInventoryItemCommand*> OnUseCommand;
+	TArray<UInventoryItemCommand*> OnUseCommand = { };
 };
 
 USTRUCT(BlueprintType)
@@ -41,13 +41,13 @@ struct FInventoryItemWrapper
 	GENERATED_BODY()
 
 	UPROPERTY(BlueprintReadOnly, Category = "Inventory")
-	FGameplayTag Tag;
+	FGameplayTag Tag = FGameplayTag::EmptyTag;
 
 	UPROPERTY(BlueprintReadOnly, Category="Inventory")
-	UInventoryItem* Item;
+	TObjectPtr<UInventoryItem> Item = nullptr;
 
 	UPROPERTY(BlueprintReadOnly, Category="Inventory")
-	int Count;
+	int Count = 0;
 };
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))

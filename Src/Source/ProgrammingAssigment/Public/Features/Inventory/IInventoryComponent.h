@@ -9,7 +9,7 @@
 class UInventoryComponent;
 
 // This class does not need to be modified.
-UINTERFACE()
+UINTERFACE(Blueprintable, BlueprintType)
 class UIInventoryComponent : public UInterface
 {
 	GENERATED_BODY()

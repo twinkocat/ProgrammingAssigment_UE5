@@ -9,7 +9,7 @@
 class UInteractableComponent;
 
 // This class does not need to be modified.
-UINTERFACE(Blueprintable)
+UINTERFACE(Blueprintable, BlueprintType)
 class UInteractable : public UInterface
 {
 	GENERATED_BODY()

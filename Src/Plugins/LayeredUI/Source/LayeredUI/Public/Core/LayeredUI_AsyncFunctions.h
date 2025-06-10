@@ -42,7 +42,7 @@ class LAYEREDUI_API ULayeredUI_AddWidgetToLayer : public UBlueprintAsyncActionBa
 public:
 
 	UFUNCTION(Category="LayeredUI", BlueprintCallable, meta=(BlueprintInternalUseOnly="true", WorldContext="Context"), DisplayName = "Add widget to Layer (Async)")
-	static ULayeredUI_AddWidgetToLayer* AddWidgetToLayer_Async(TSoftClassPtr<UUserWidget> Widget, UPARAM(meta=(Categories="UI.Layer"))FGameplayTag Layer, UObject* Context);
+	static ULayeredUI_AddWidgetToLayer* AddWidgetToLayer_Async(TSoftClassPtr<UUserWidget> Widget, UPARAM(meta=(Categories="LayeredUI"))FGameplayTag Layer, UObject* Context);
 
 	virtual void Activate() override;
 };
