@@ -1,24 +1,30 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Actors/PickUpItem.h"
+#include "Actors/PlayersPickUp.h"
+
 #include "Features/Interaction/InteractableComponent.h"
 #include "Features/Inventory/IInventoryComponent.h"
 #include "Features/Inventory/InventoryComponent.h"
 
 
-APickUpItem::APickUpItem(): CountToAdd(0)
+// Sets default values
+APlayersPickUp::APlayersPickUp()
 {
 	PrimaryActorTick.bCanEverTick = false;
 }
 
+void APlayersPickUp::SetupItem_Implementation(const FInventoryItemWrapper& Item)
+{
+	CurrentItem = Item;
+}
 
-bool APickUpItem::StartInteract_Implementation(UInteractableComponent* Component, FInteractionInfo& InteractionInfo)
+bool APlayersPickUp::StartInteract_Implementation(UInteractableComponent* Component, FInteractionInfo& InteractionInfo)
 {
 	bool Success = false;
 	if (UInventoryComponent* InventoryComponent = IIInventoryComponent::Execute_GetInventoryComponent(Component->GetOwner()))
 	{
-		InventoryComponent->AddItem(ItemToAdd, CountToAdd);
+		InventoryComponent->AddItem(CurrentItem.Tag, CurrentItem.Count);
 		Success = true;
 	}
 	InteractionInfo.SuccessInteract = Success;
