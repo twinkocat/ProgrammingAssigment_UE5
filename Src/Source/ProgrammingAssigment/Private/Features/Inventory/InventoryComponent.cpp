@@ -79,6 +79,18 @@ void UInventoryComponent::UseItem(const FGameplayTag& ItemTag)
 	}
 }
 
+bool UInventoryComponent::HasItem(const FGameplayTag& ItemTag) const
+{
+	for (const FInventoryItemWrapper& Element : Items)
+	{
+		if (Element.Item && Element.Tag == ItemTag)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
 
 void UInventoryComponent::BeginPlay()
 {

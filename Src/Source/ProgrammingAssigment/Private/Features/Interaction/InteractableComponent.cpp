@@ -56,11 +56,6 @@ void UInteractableComponent::ProcessInteractionHit(const FHitResult& HitResult)
 
 	if (NewLookingObject != LookingObject)
 	{
-		if (InteractingObject)
-		{
-			EndInteract();
-		}
-
 		if (LookingObject != nullptr)
 		{
 			IInteractable::Execute_StopLooking(LookingObject, this);
@@ -81,26 +76,15 @@ void UInteractableComponent::ProcessInteractionHit(const FHitResult& HitResult)
 	}
 }
 
-bool UInteractableComponent::StartInteract()
+void  UInteractableComponent::StartInteract()
 {
 	if (LookingObject == nullptr || !IInteractable::Execute_IsInteractable(LookingObject, this))
 	{
-		return false;
+		return;
 	}
-
+	
+	FInteractionInfo Info;
 	InteractingObject = LookingObject;
-	IInteractable::Execute_StartInteract(InteractingObject, this);
-	return true;
-}
-
-bool UInteractableComponent::EndInteract()
-{
-	if (InteractingObject == nullptr)
-	{
-		return false;
-	}
-
-	IInteractable::Execute_EndInteract(InteractingObject, this);
-	InteractingObject = nullptr;
-	return true;
+	IInteractable::Execute_StartInteract(InteractingObject, this, Info);
+	OnInteract.Broadcast(Info);
 }

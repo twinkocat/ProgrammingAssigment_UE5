@@ -6,8 +6,28 @@
 #include "Components/ActorComponent.h"
 #include "InteractableComponent.generated.h"
 
-
 class ABaseCharacter;
+
+UENUM(BlueprintType)
+enum EInteractionType : uint8
+{
+	None = 0,
+	Pickup = 1,
+};
+
+USTRUCT(BlueprintType)
+struct FInteractionInfo
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite)
+	bool SuccessInteract = false;
+
+	UPROPERTY(BlueprintReadWrite)
+	TEnumAsByte<EInteractionType> InteractionType = EInteractionType::None;
+};
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInteract, FInteractionInfo, Info);
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class PROGRAMMINGASSIGMENT_API UInteractableComponent : public UActorComponent
@@ -18,10 +38,10 @@ public:
 	UInteractableComponent();
 
 	UFUNCTION(BlueprintCallable)
-	bool StartInteract();
+	void StartInteract();
 
-	UFUNCTION(BlueprintCallable)
-	bool EndInteract();
+	UPROPERTY(BlueprintAssignable)
+	FOnInteract OnInteract;
 	
 protected:
 	virtual void BeginPlay() override;

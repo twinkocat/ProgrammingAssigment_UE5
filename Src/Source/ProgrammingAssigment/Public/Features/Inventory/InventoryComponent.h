@@ -84,6 +84,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Inventory")
 	void UseItem(const FGameplayTag& ItemTag);
 
+	UFUNCTION(BlueprintCallable, Category="Inventory")
+	bool HasItem(const FGameplayTag& ItemTag) const;
+	
 	UPROPERTY(BlueprintAssignable, Category="Inventory")
 	FOnItemAdded OnItemAdded;
 	
