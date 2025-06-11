@@ -7,6 +7,7 @@
 #include "Components/ActorComponent.h"
 #include "InventoryComponent.generated.h"
 
+class APlayersPickUp;
 class UInventoryItem;
 class UInventoryDataAsset;
 class UInventoryItemCommand;
@@ -68,7 +69,10 @@ struct FAddedItemInfo
 	int Count = 0;
 };
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnItemDropped);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnItemAdded, FAddedItemInfo, Info);
+
+
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class PROGRAMMINGASSIGMENT_API UInventoryComponent : public UActorComponent
@@ -85,16 +89,41 @@ public:
 	void UseItem(const FGameplayTag& ItemTag);
 
 	UFUNCTION(BlueprintCallable, Category="Inventory")
+	void DropItem(const FGameplayTag& ItemTag, const int ItemCount);
+	
+	UFUNCTION(BlueprintCallable, Category="Inventory")
 	bool HasItem(const FGameplayTag& ItemTag) const;
+
+	UFUNCTION(BlueprintCallable, Category="Inventory")
+	void RemoveItem(const FGameplayTag& ItemTag, const int ItemCount);
+	
+	UFUNCTION(BlueprintCallable, Category="Inventory")
+	bool FindItem(const FGameplayTag& ItemTag, FInventoryItemWrapper& OutItem) const;
 	
 	UPROPERTY(BlueprintAssignable, Category="Inventory")
 	FOnItemAdded OnItemAdded;
+
+	UPROPERTY(BlueprintAssignable, Category="Inventory")
+	FOnItemDropped OnItemDropped;
 	
 protected:
 	virtual void BeginPlay() override;
 
+private:
+
+	FInventoryItemWrapper* FindItem_Internal(const FGameplayTag& ItemTag) const;
+	
+	void RemoveItem_Internal(FInventoryItemWrapper* Item, const int ItemCount);
+
+protected:
 	UPROPERTY(BlueprintReadWrite, Category="Inventory")
 	TArray<FInventoryItemWrapper> Items;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Inventory")
+	TSubclassOf<APlayersPickUp> DroppedItemClass;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Inventory")
+	TSoftObjectPtr<UAnimMontage> DropAnimMontage;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Inventory")
 	TSoftObjectPtr<UInventoryDataAsset> InventoryDataAsset;

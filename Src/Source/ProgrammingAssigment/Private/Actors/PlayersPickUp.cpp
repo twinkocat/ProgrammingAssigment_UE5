@@ -16,7 +16,6 @@ APlayersPickUp::APlayersPickUp()
 
 void APlayersPickUp::SetupItem_Implementation(const FInventoryItemWrapper& Item)
 {
-	CurrentItem = Item;
 }
 
 bool APlayersPickUp::StartInteract_Implementation(UInteractableComponent* Component, FInteractionInfo& InteractionInfo)

@@ -26,6 +26,6 @@ public:
 	
 protected:
 	
-	UPROPERTY(BlueprintReadOnly, Category = "Interaction")
+	UPROPERTY(BlueprintReadWrite, Category = "Interaction")
 	FInventoryItemWrapper CurrentItem;
 };
