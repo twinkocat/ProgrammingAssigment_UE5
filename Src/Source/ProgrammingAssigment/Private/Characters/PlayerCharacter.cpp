@@ -28,6 +28,16 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
+void APlayerCharacter::Interact()
+{
+	Interact_Server();
+}
+
+void APlayerCharacter::Interact_Server_Implementation()
+{
+	InteractableComponent->StartInteract();
+}
+
 UInteractableComponent* APlayerCharacter::GetInteractableComponent_Implementation() const
 {
 	return InteractableComponent;

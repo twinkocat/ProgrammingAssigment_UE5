@@ -61,10 +61,7 @@ void AMyPlayerController::HandleInputMove(const FInputActionValue& Value)
 
 void AMyPlayerController::HandleInteract()
 {
-	if (UInteractableComponent* InteractableComponent = IIInteractableComponent::Execute_GetInteractableComponent(CachedOwner))
-	{
-		InteractableComponent->StartInteract();
-	}
+	CachedOwner->Interact();
 }
 
 void AMyPlayerController::HandleLook(const FInputActionValue& Value)
