@@ -2,10 +2,8 @@
 
 
 #include "Actors/PlayersPickUp.h"
-
-#include "Features/Interaction/InteractableComponent.h"
-#include "Features/Inventory/IInventoryComponent.h"
 #include "Features/Inventory/InventoryComponent.h"
+#include "Net/UnrealNetwork.h"
 
 
 // Sets default values
@@ -16,17 +14,6 @@ APlayersPickUp::APlayersPickUp()
 
 void APlayersPickUp::SetupItem_Implementation(const FInventoryItemWrapper& Item)
 {
-}
-
-bool APlayersPickUp::StartInteract_Implementation(UInteractableComponent* Component, FInteractionInfo& InteractionInfo)
-{
-	bool Success = false;
-	if (UInventoryComponent* InventoryComponent = IIInventoryComponent::Execute_GetInventoryComponent(Component->GetOwner()))
-	{
-		InventoryComponent->AddItem(CurrentItem.Tag, CurrentItem.Count);
-		Success = true;
-	}
-	InteractionInfo.SuccessInteract = Success;
-	InteractionInfo.InteractionType = InteractionType;
-	return Success;
+	ItemToAdd = Item.Tag;
+	CountToAdd = Item.Count;
 }

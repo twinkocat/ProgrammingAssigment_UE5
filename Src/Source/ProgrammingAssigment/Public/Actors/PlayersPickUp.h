@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "InteractableActor.h"
+#include "PickUpItem.h"
 #include "Features/Interaction/Interactable.h"
 #include "Features/Inventory/InventoryComponent.h"
 #include "GameFramework/Actor.h"
@@ -12,7 +13,7 @@
 enum EInteractionType : uint8;
 
 UCLASS(BlueprintType, Blueprintable)
-class PROGRAMMINGASSIGMENT_API APlayersPickUp : public AInteractableActor
+class PROGRAMMINGASSIGMENT_API APlayersPickUp : public APickUpItem
 {
 	GENERATED_BODY()
 
@@ -21,11 +22,4 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Interaction")
 	void SetupItem(const FInventoryItemWrapper& Item);
-
-	virtual bool StartInteract_Implementation(UInteractableComponent* Component, FInteractionInfo& InteractionInfo) override;
-	
-protected:
-	
-	UPROPERTY(BlueprintReadWrite, Category = "Interaction")
-	FInventoryItemWrapper CurrentItem;
 };

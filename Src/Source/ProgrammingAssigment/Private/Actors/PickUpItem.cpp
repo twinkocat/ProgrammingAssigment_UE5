@@ -23,5 +23,11 @@ bool APickUpItem::StartInteract_Implementation(UInteractableComponent* Component
 	}
 	InteractionInfo.SuccessInteract = Success;
 	InteractionInfo.InteractionType = InteractionType;
+
+	if (Success)
+	{
+		Destroy();
+	}
+	
 	return Success;
 }
