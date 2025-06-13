@@ -33,7 +33,7 @@ void UInventoryComponent::AddItem(const FGameplayTag& ItemTag, const int ItemCou
 		AddedItemInfo.Name = ItemData.Name;
 		AddedItemInfo.Image = ItemData.ItemImage;
 		AddedItemInfo.Count = ItemCount;
-		OnItemAdded.Broadcast(AddedItemInfo);
+		OnItemInfoNotified.Broadcast(AddedItemInfo);
 
 		if (FInventoryItemWrapper* ItemWrapper = FindItem_Internal(ItemTag))
 		{
@@ -98,7 +98,7 @@ void UInventoryComponent::Server_DropItem_Implementation(const FInventoryItemWra
 		{
 			APlayersPickUp* DroppedItem = GetWorld()->SpawnActor<APlayersPickUp>(DroppedItemClass, DropLocation, Rotator);
 			DroppedItem->SetupItem(ItemWrapper);
-			OnItemDropped.Broadcast();
+			OnItemDroppedAnimation.Broadcast();
 			break;
 		}
 	}

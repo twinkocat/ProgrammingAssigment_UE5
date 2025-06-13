@@ -20,8 +20,7 @@ void UInteractableComponent::BeginPlay()
 	CachedOwner = GetOwner();
 }
 
-void UInteractableComponent::TickComponent(float DeltaTime, enum ELevelTick TickType,
-                                           FActorComponentTickFunction* ThisTickFunction)
+void UInteractableComponent::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
@@ -83,8 +82,8 @@ void  UInteractableComponent::StartInteract()
 		return;
 	}
 	
-	FInteractionInfo Info;
+	FInteractionAnimationInfo Info;
 	InteractingObject = LookingObject;
 	IInteractable::Execute_StartInteract(InteractingObject, this, Info);
-	OnInteract.Broadcast(Info);
+	OnInteractAnimation.Broadcast(Info);
 }

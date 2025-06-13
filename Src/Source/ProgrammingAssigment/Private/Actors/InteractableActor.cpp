@@ -27,7 +27,7 @@ bool AInteractableActor::IsInteractable_Implementation(UInteractableComponent* C
 	return true;
 }
 
-bool AInteractableActor::StartInteract_Implementation(UInteractableComponent* Component, FInteractionInfo& InteractionInfo)
+bool AInteractableActor::StartInteract_Implementation(UInteractableComponent* Component, FInteractionAnimationInfo& InteractionInfo)
 {
 	return true;
 }

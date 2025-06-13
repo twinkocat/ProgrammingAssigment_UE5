@@ -106,10 +106,10 @@ public:
 	bool FindItem(const FGameplayTag& ItemTag, FInventoryItemWrapper& OutItem) const;
 	
 	UPROPERTY(BlueprintAssignable, Category="Inventory")
-	FOnItemAdded OnItemAdded;
+	FOnItemAdded OnItemInfoNotified;
 
 	UPROPERTY(BlueprintAssignable, Category="Inventory")
-	FOnItemDropped OnItemDropped;
+	FOnItemDropped OnItemDroppedAnimation;
 	
 protected:
 	virtual void BeginPlay() override;

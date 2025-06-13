@@ -16,7 +16,7 @@ enum EInteractionType : uint8
 };
 
 USTRUCT(BlueprintType)
-struct FInteractionInfo
+struct FInteractionAnimationInfo
 {
 	GENERATED_BODY()
 
@@ -27,7 +27,7 @@ struct FInteractionInfo
 	TEnumAsByte<EInteractionType> InteractionType = EInteractionType::None;
 };
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInteract, FInteractionInfo, Info);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInteractAnimation, FInteractionAnimationInfo, Info);
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class PROGRAMMINGASSIGMENT_API UInteractableComponent : public UActorComponent
@@ -41,7 +41,7 @@ public:
 	void StartInteract();
 
 	UPROPERTY(BlueprintAssignable)
-	FOnInteract OnInteract;
+	FOnInteractAnimation OnInteractAnimation;
 	
 protected:
 	virtual void BeginPlay() override;

@@ -21,7 +21,7 @@ void APickUpItem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifet
 }
 
 
-bool APickUpItem::StartInteract_Implementation(UInteractableComponent* Component, FInteractionInfo& InteractionInfo)
+bool APickUpItem::StartInteract_Implementation(UInteractableComponent* Component, FInteractionAnimationInfo& InteractionInfo)
 {
 	bool Success = false;
 	if (UInventoryComponent* InventoryComponent = IIInventoryComponent::Execute_GetInventoryComponent(Component->GetOwner()))

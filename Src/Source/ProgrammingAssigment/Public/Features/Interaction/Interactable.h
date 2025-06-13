@@ -6,7 +6,7 @@
 #include "UObject/Interface.h"
 #include "Interactable.generated.h"
 
-struct FInteractionInfo;
+struct FInteractionAnimationInfo;
 class UInteractableComponent;
 
 // This class does not need to be modified.
@@ -29,7 +29,7 @@ public:
 	bool IsInteractable(UInteractableComponent* Component) const;
 
 	UFUNCTION( BlueprintNativeEvent, Category = "Interaction" )
-	bool StartInteract(UInteractableComponent* Component, FInteractionInfo& InteractionInfo);
+	bool StartInteract(UInteractableComponent* Component, FInteractionAnimationInfo& InteractionInfo);
 
 	UFUNCTION( BlueprintNativeEvent, Category = "Interaction" )
 	void StartLooking(UInteractableComponent* Component);
@@ -39,7 +39,7 @@ public:
 
 	virtual bool IsInteractable_Implementation(UInteractableComponent* Component) const = 0;
 
-	virtual bool StartInteract_Implementation(UInteractableComponent* Component, FInteractionInfo& InteractionInfo) = 0;
+	virtual bool StartInteract_Implementation(UInteractableComponent* Component, FInteractionAnimationInfo& InteractionInfo) = 0;
 
 	virtual void StartLooking_Implementation(UInteractableComponent* Component) = 0;
 	virtual void StopLooking_Implementation(UInteractableComponent* Component) = 0;

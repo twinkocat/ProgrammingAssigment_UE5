@@ -21,7 +21,7 @@ public:
 	virtual void BeginPlay() override;
 	
 	virtual bool IsInteractable_Implementation(UInteractableComponent* Component) const override;
-	virtual bool StartInteract_Implementation(UInteractableComponent* Component, FInteractionInfo& InteractionInfo) override;
+	virtual bool StartInteract_Implementation(UInteractableComponent* Component, FInteractionAnimationInfo& InteractionInfo) override;
 	virtual void StartLooking_Implementation(UInteractableComponent* Component) override;
 	virtual void StopLooking_Implementation(UInteractableComponent* Component) override;
 
