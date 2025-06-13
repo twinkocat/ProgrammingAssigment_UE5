@@ -12,8 +12,21 @@ APlayersPickUp::APlayersPickUp()
 	PrimaryActorTick.bCanEverTick = false;
 }
 
+void APlayersPickUp::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(APlayersPickUp, ItemWrapper)
+}
+
+void APlayersPickUp::OnRep_ItemWrapper()
+{
+	ItemToAdd = ItemWrapper.Tag;
+	CountToAdd = ItemWrapper.Count;
+	OnItemSetup.Broadcast(ItemWrapper);
+}
+
 void APlayersPickUp::SetupItem_Implementation(const FInventoryItemWrapper& Item)
 {
-	ItemToAdd = Item.Tag;
-	CountToAdd = Item.Count;
+	ItemWrapper = Item;
+	OnRep_ItemWrapper();
 }

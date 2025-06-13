@@ -82,6 +82,8 @@ class PROGRAMMINGASSIGMENT_API UInventoryComponent : public UActorComponent
 public:
 	UInventoryComponent();
 
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	
 	UFUNCTION(BlueprintCallable, Category="Inventory")
 	void AddItem(const FGameplayTag& ItemTag, const int ItemCount);
 
@@ -90,6 +92,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category="Inventory")
 	void DropItem(const FGameplayTag& ItemTag, const int ItemCount);
+	
+	UFUNCTION(Server, Reliable)
+	void Server_DropItem(const FInventoryItemWrapper& ItemWrapper);
 	
 	UFUNCTION(BlueprintCallable, Category="Inventory")
 	bool HasItem(const FGameplayTag& ItemTag) const;
@@ -116,15 +121,21 @@ private:
 	void RemoveItem_Internal(FInventoryItemWrapper* Item, const int ItemCount);
 
 protected:
-	UPROPERTY(BlueprintReadWrite, Category="Inventory")
+	UPROPERTY(Replicated, BlueprintReadWrite, Category="Inventory")
 	TArray<FInventoryItemWrapper> Items;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Inventory")
-	TSubclassOf<APlayersPickUp> DroppedItemClass;
-	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Inventory")
-	TSoftObjectPtr<UAnimMontage> DropAnimMontage;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Inventory")
 	TSoftObjectPtr<UInventoryDataAsset> InventoryDataAsset;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Inventory|Drop")
+	float DropDistance = 50.F;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Inventory|Drop")
+	float DropRadius = 25.F;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Inventory|Drop")
+	TSubclassOf<APlayersPickUp> DroppedItemClass;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Inventory|Drop")
+	TSoftObjectPtr<UAnimMontage> DropAnimMontage;
 };

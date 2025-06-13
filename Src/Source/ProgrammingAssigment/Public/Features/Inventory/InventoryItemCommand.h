@@ -16,6 +16,8 @@ class PROGRAMMINGASSIGMENT_API UInventoryItemCommand : public UObject
 	GENERATED_BODY()
 
 public:
+	virtual bool IsSupportedForNetworking() const override { return true; }
+	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Inventory")
 	void Execute(UInventoryComponent* InventoryComponent);
 

@@ -3,7 +3,15 @@
 
 #include "Features/Inventory/InventoryItem.h"
 #include "Features/Inventory/InventoryItemCommand.h"
+#include "Net/UnrealNetwork.h"
 
+
+void UInventoryItem::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
+{
+	UObject::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(UInventoryItem, ItemData)
+	
+}
 
 void UInventoryItem::OnUse(UInventoryComponent* InventoryComponent)
 {

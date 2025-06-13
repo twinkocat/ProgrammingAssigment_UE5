@@ -7,12 +7,19 @@
 #include "Actors/PlayersPickUp.h"
 #include "Features/Inventory/InventoryDataAsset.h"
 #include "Features/Inventory/InventoryItem.h"
+#include "Net/UnrealNetwork.h"
 
 
 UInventoryComponent::UInventoryComponent()
 {
 
 	PrimaryComponentTick.bCanEverTick = false;
+}
+
+void UInventoryComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(UInventoryComponent, Items)
 }
 
 void UInventoryComponent::AddItem(const FGameplayTag& ItemTag, const int ItemCount)
@@ -63,46 +70,36 @@ void UInventoryComponent::UseItem(const FGameplayTag& ItemTag)
 
 void UInventoryComponent::DropItem(const FGameplayTag& ItemTag, const int ItemCount)
 {
-	const float DropDistance = 50.0f;
-	const float TraceRadius = 15.0f;
-	
 	if (FInventoryItemWrapper* ItemWrapper = FindItem_Internal(ItemTag))
 	{
-		const AActor* OwnerActor = GetOwner();
-		
-		const FVector Positon = OwnerActor->GetActorLocation();
-		const FRotator Rotator = GetOwner()->GetActorRotation();
+		Server_DropItem(*ItemWrapper);
+		RemoveItem_Internal(ItemWrapper, ItemCount);
+	}
+}
 
-		TArray OffsetDirections = {
-			OwnerActor->GetActorForwardVector(),
-			OwnerActor->GetActorRightVector(),
-			-OwnerActor->GetActorRightVector(),
-			-OwnerActor->GetActorForwardVector(),
-		};
+void UInventoryComponent::Server_DropItem_Implementation(const FInventoryItemWrapper& ItemWrapper)
+{
+	const AActor* OwnerActor = GetOwner();
 		
-		for (const FVector& Offset : OffsetDirections)
+	const FVector Positon = OwnerActor->GetActorLocation();
+	const FRotator Rotator = GetOwner()->GetActorRotation();
+		
+	TArray OffsetDirections = { OwnerActor->GetActorForwardVector(), OwnerActor->GetActorRightVector(), -OwnerActor->GetActorRightVector(), -OwnerActor->GetActorForwardVector() };
+		
+	for (const FVector& Offset : OffsetDirections)
+	{
+		FVector DropLocation = Positon + Offset * DropDistance;
+
+		FCollisionQueryParams TraceParams;
+		TraceParams.AddIgnoredActor(OwnerActor);
+		const bool bBlocked = GetWorld()->OverlapAnyTestByChannel(DropLocation,FQuat::Identity, ECC_WorldStatic,FCollisionShape::MakeSphere(DropRadius),TraceParams);
+
+		if (!bBlocked)
 		{
-			FVector DropLocation = Positon + Offset * DropDistance;
-
-			FCollisionQueryParams TraceParams;
-			TraceParams.AddIgnoredActor(OwnerActor);
-
-			const bool bBlocked = GetWorld()->OverlapAnyTestByChannel(
-				DropLocation,
-				FQuat::Identity,
-				ECC_WorldStatic,
-				FCollisionShape::MakeSphere(TraceRadius),
-				TraceParams
-			);
-
-			if (!bBlocked)
-			{
-				APlayersPickUp* DroppedItem = GetWorld()->SpawnActor<APlayersPickUp>(DroppedItemClass, DropLocation, Rotator);
-				DroppedItem->SetupItem(*ItemWrapper);
-				RemoveItem_Internal(ItemWrapper, ItemCount);
-				OnItemDropped.Broadcast();
-				break;
-			}
+			APlayersPickUp* DroppedItem = GetWorld()->SpawnActor<APlayersPickUp>(DroppedItemClass, DropLocation, Rotator);
+			DroppedItem->SetupItem(ItemWrapper);
+			OnItemDropped.Broadcast();
+			break;
 		}
 	}
 }

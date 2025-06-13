@@ -17,6 +17,10 @@ class PROGRAMMINGASSIGMENT_API UInventoryItem : public UObject
 	GENERATED_BODY()
 
 public:
+
+	virtual bool IsSupportedForNetworking() const override { return true; }
+	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
+	
 	void OnUse(UInventoryComponent* InventoryComponent);
 	void OnDrop(UInventoryComponent* InventoryComponent);
 
@@ -28,6 +32,6 @@ public:
 
 protected:
 	
-	UPROPERTY(BlueprintReadOnly, Category="Inventory")
+	UPROPERTY(Replicated, BlueprintReadOnly, Category="Inventory")
 	FInventoryItemData ItemData;
 };
