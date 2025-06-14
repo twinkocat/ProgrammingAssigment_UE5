@@ -11,6 +11,7 @@
 APickUpItem::APickUpItem(): CountToAdd(0)
 {
 	PrimaryActorTick.bCanEverTick = false;
+	SetReplicates(true);
 }
 
 void APickUpItem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

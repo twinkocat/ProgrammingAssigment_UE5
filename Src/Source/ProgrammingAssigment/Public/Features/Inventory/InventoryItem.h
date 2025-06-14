@@ -27,11 +27,15 @@ public:
 	FORCEINLINE FText GetItemName() const { return ItemData.Name; };
 
 	FORCEINLINE bool IsConsumable() const { return ItemData.Consumable; }
+
+	FORCEINLINE FText GetItemDescription() const { return ItemData.Description; };
+
+	FORCEINLINE TSoftObjectPtr<UTexture2D> GetImage() const { return ItemData.ItemImage; };
 	
 	static UInventoryItem* Create(const FInventoryItemData& ItemData, AActor* Owner);
 	static void Dispose(UInventoryItem* InventoryItem, AActor* Owner);
-protected:
 	
+protected:
 	UPROPERTY(Replicated, BlueprintReadOnly, Category="Inventory")
 	FInventoryItemData ItemData;
 };

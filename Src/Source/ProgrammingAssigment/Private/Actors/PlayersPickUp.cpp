@@ -3,6 +3,7 @@
 
 #include "Actors/PlayersPickUp.h"
 #include "Features/Inventory/InventoryComponent.h"
+#include "Features/Inventory/InventoryItem.h"
 #include "Net/UnrealNetwork.h"
 
 
@@ -12,21 +13,46 @@ APlayersPickUp::APlayersPickUp()
 	PrimaryActorTick.bCanEverTick = false;
 }
 
+void APlayersPickUp::BeginPlay()
+{
+	Super::BeginPlay();
+	ItemWrapperChanged();
+}
+
 void APlayersPickUp::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(APlayersPickUp, ItemWrapper)
+	DOREPLIFETIME(APlayersPickUp, ItemImage);
 }
 
-void APlayersPickUp::OnRep_ItemWrapper()
+void APlayersPickUp::OnRep_ItemImage()
 {
-	ItemToAdd = ItemWrapper.Tag;
-	CountToAdd = ItemWrapper.Count;
-	OnItemSetup.Broadcast(ItemWrapper);
+	ItemWrapperChanged();
 }
 
-void APlayersPickUp::SetupItem_Implementation(const FInventoryItemWrapper& Item)
+void APlayersPickUp::SetupItem_Implementation(const FInventoryItemWrapper& Wrapper)
 {
-	ItemWrapper = Item;
-	OnRep_ItemWrapper();
+	Server_SetupItem(Wrapper);
+}
+
+void APlayersPickUp::Server_SetupItem_Implementation(const FInventoryItemWrapper& Wrapper)
+{
+	SetupItem_Internal(Wrapper);	
+}
+
+void APlayersPickUp::SetupItem_Internal(const FInventoryItemWrapper& Wrapper)
+{
+	ItemToAdd = Wrapper.Tag;
+	CountToAdd = Wrapper.Count;
+	ItemImage = Wrapper.Item->GetImage();
+	ItemWrapperChanged();
+}
+
+void APlayersPickUp::ItemWrapperChanged()
+{
+	if (!HasActorBegunPlay())
+	{
+		return;
+	}
+	OnItemSetup.Broadcast();
 }

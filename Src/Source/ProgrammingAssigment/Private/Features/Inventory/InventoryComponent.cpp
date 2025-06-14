@@ -99,7 +99,6 @@ void UInventoryComponent::BeginPlay()
 
 void UInventoryComponent::OnRep_Items()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 10, FColor::Red, "OnRep_Items");
 	OnInventoryUpdated.Broadcast();
 }
 
