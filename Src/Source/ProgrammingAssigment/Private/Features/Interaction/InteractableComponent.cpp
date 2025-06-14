@@ -13,15 +13,13 @@ UInteractableComponent::UInteractableComponent(): TraceLength(0), ColliderCheckR
 	PrimaryComponentTick.TickInterval = 0.1F;
 }
 
-
 void UInteractableComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	CachedOwner = GetOwner();
 }
 
-void UInteractableComponent::TickComponent(float DeltaTime, enum ELevelTick TickType,
-                                           FActorComponentTickFunction* ThisTickFunction)
+void UInteractableComponent::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
@@ -78,13 +76,23 @@ void UInteractableComponent::ProcessInteractionHit(const FHitResult& HitResult)
 
 void  UInteractableComponent::StartInteract()
 {
+	Server_StartInteract();
+}
+
+void UInteractableComponent::Server_StartInteract_Implementation()
+{
+	StartInteract_Internal();
+}
+
+void UInteractableComponent::StartInteract_Internal()
+{
 	if (LookingObject == nullptr || !IInteractable::Execute_IsInteractable(LookingObject, this))
 	{
 		return;
 	}
 	
-	FInteractionInfo Info;
+	FInteractionAnimationInfo Info;
 	InteractingObject = LookingObject;
 	IInteractable::Execute_StartInteract(InteractingObject, this, Info);
-	OnInteract.Broadcast(Info);
+	OnInteractAnimation.Broadcast(Info);
 }

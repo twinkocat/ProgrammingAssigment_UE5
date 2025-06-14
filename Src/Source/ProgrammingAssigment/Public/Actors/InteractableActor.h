@@ -7,6 +7,7 @@
 #include "GameFramework/Actor.h"
 #include "InteractableActor.generated.h"
 
+class UWidgetComponent;
 enum EInteractionType : uint8;
 
 UCLASS()
@@ -16,13 +17,20 @@ class PROGRAMMINGASSIGMENT_API AInteractableActor : public AActor, public IInter
 
 public:
 	AInteractableActor();
+
+	virtual void BeginPlay() override;
 	
 	virtual bool IsInteractable_Implementation(UInteractableComponent* Component) const override;
-	virtual bool StartInteract_Implementation(UInteractableComponent* Component, FInteractionInfo& InteractionInfo) override;
+	virtual bool StartInteract_Implementation(UInteractableComponent* Component, FInteractionAnimationInfo& InteractionInfo) override;
 	virtual void StartLooking_Implementation(UInteractableComponent* Component) override;
 	virtual void StopLooking_Implementation(UInteractableComponent* Component) override;
 
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Inventory")
+	void SetWidgetActive(const bool bIsActive, const UInteractableComponent* Component);
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Interaction")
+	UWidgetComponent* WidgetComponent;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Interaction")
 	TEnumAsByte<EInteractionType> InteractionType;
 };

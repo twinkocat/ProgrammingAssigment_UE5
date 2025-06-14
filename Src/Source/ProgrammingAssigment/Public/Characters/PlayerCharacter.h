@@ -23,7 +23,10 @@ protected:
 
 public:
 	virtual void Tick(float DeltaTime) override;
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
+
+	UFUNCTION(BlueprintCallable)
+	void Interact();
 
 	virtual UInteractableComponent* GetInteractableComponent_Implementation() const override;
 	virtual UInventoryComponent* GetInventoryComponent_Implementation() const override;

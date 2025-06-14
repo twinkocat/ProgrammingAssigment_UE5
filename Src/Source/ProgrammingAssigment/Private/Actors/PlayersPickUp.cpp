@@ -2,10 +2,8 @@
 
 
 #include "Actors/PlayersPickUp.h"
-
-#include "Features/Interaction/InteractableComponent.h"
-#include "Features/Inventory/IInventoryComponent.h"
 #include "Features/Inventory/InventoryComponent.h"
+#include "Net/UnrealNetwork.h"
 
 
 // Sets default values
@@ -14,19 +12,21 @@ APlayersPickUp::APlayersPickUp()
 	PrimaryActorTick.bCanEverTick = false;
 }
 
-void APlayersPickUp::SetupItem_Implementation(const FInventoryItemWrapper& Item)
+void APlayersPickUp::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(APlayersPickUp, ItemWrapper)
 }
 
-bool APlayersPickUp::StartInteract_Implementation(UInteractableComponent* Component, FInteractionInfo& InteractionInfo)
+void APlayersPickUp::OnRep_ItemWrapper()
 {
-	bool Success = false;
-	if (UInventoryComponent* InventoryComponent = IIInventoryComponent::Execute_GetInventoryComponent(Component->GetOwner()))
-	{
-		InventoryComponent->AddItem(CurrentItem.Tag, CurrentItem.Count);
-		Success = true;
-	}
-	InteractionInfo.SuccessInteract = Success;
-	InteractionInfo.InteractionType = InteractionType;
-	return Success;
+	ItemToAdd = ItemWrapper.Tag;
+	CountToAdd = ItemWrapper.Count;
+	OnItemSetup.Broadcast(ItemWrapper);
+}
+
+void APlayersPickUp::SetupItem_Implementation(const FInventoryItemWrapper& Item)
+{
+	ItemWrapper = Item;
+	OnRep_ItemWrapper();
 }
