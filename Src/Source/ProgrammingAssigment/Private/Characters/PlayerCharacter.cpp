@@ -30,11 +30,6 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 void APlayerCharacter::Interact()
 {
-	Interact_Server();
-}
-
-void APlayerCharacter::Interact_Server_Implementation()
-{
 	InteractableComponent->StartInteract();
 }
 

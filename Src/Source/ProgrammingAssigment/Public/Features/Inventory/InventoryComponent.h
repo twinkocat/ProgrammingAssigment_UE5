@@ -69,6 +69,9 @@ struct FAddedItemInfo
 	int Count = 0;
 };
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInvetoryUpdated);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FServer_OnInvetoryUpdated);
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnItemDropped);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnItemAdded, FAddedItemInfo, Info);
 
@@ -87,20 +90,32 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Inventory")
 	void AddItem(const FGameplayTag& ItemTag, const int ItemCount);
 
-	UFUNCTION(BlueprintCallable, Category="Inventory")
-	void UseItem(const FGameplayTag& ItemTag);
+	UFUNCTION(NetMulticast, Reliable)
+	void NotifyNewItemInfo(const FInventoryItemData ItemData, const int ItemCount);
+	
+	UFUNCTION(Server, Reliable)
+	void Server_AddItem(const FGameplayTag& ItemTag, const int ItemCount);
 
+	UFUNCTION(BlueprintCallable, Category="Inventory")
+	void UseItem(const FGameplayTag& ItemTag, const int ItemCount);
+
+	UFUNCTION(Server, Reliable)
+	void Server_UseItem(const FGameplayTag& ItemTag, const int ItemCount);
+	
 	UFUNCTION(BlueprintCallable, Category="Inventory")
 	void DropItem(const FGameplayTag& ItemTag, const int ItemCount);
 	
 	UFUNCTION(Server, Reliable)
-	void Server_DropItem(const FInventoryItemWrapper& ItemWrapper);
-	
-	UFUNCTION(BlueprintCallable, Category="Inventory")
-	bool HasItem(const FGameplayTag& ItemTag) const;
+	void Server_DropItem(const FGameplayTag& ItemTag, const int ItemCount);
 
 	UFUNCTION(BlueprintCallable, Category="Inventory")
+	bool HasItem(const FGameplayTag& ItemTag) const;
+	
+	UFUNCTION(BlueprintCallable, Category="Inventory")
 	void RemoveItem(const FGameplayTag& ItemTag, const int ItemCount);
+
+	UFUNCTION(Server, Reliable)
+	void Server_RemoveItem(const FGameplayTag& ItemTag, const int ItemCount);
 	
 	UFUNCTION(BlueprintCallable, Category="Inventory")
 	bool FindItem(const FGameplayTag& ItemTag, FInventoryItemWrapper& OutItem) const;
@@ -110,18 +125,32 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category="Inventory")
 	FOnItemDropped OnItemDroppedAnimation;
+
+	UPROPERTY(BlueprintAssignable, Category="Inventory")
+	FOnInvetoryUpdated OnInventoryUpdated;
+
+	UPROPERTY(BlueprintAssignable, Category="Inventory")
+	FServer_OnInvetoryUpdated Server_OnInventoryUpdated;
 	
 protected:
 	virtual void BeginPlay() override;
 
 private:
+	UFUNCTION()
+	void OnRep_Items();
+	
+	void AddItem_Internal(const FGameplayTag& ItemTag, const int ItemCount);
+	
+	void DropItem_Internal(const FGameplayTag& ItemTag, const int ItemCount);
 
-	FInventoryItemWrapper* FindItem_Internal(const FGameplayTag& ItemTag) const;
+	void UserItem_Internal(const FGameplayTag& ItemTag, const int ItemCount);
 	
 	void RemoveItem_Internal(FInventoryItemWrapper* Item, const int ItemCount);
 
+	FInventoryItemWrapper* FindItem_Internal(const FGameplayTag& ItemTag) const;
+
 protected:
-	UPROPERTY(Replicated, BlueprintReadWrite, Category="Inventory")
+	UPROPERTY(ReplicatedUsing=OnRep_Items, BlueprintReadWrite, Category="Inventory")
 	TArray<FInventoryItemWrapper> Items;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Inventory")

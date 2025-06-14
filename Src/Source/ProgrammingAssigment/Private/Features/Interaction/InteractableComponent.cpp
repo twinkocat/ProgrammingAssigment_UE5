@@ -13,7 +13,6 @@ UInteractableComponent::UInteractableComponent(): TraceLength(0), ColliderCheckR
 	PrimaryComponentTick.TickInterval = 0.1F;
 }
 
-
 void UInteractableComponent::BeginPlay()
 {
 	Super::BeginPlay();
@@ -76,6 +75,16 @@ void UInteractableComponent::ProcessInteractionHit(const FHitResult& HitResult)
 }
 
 void  UInteractableComponent::StartInteract()
+{
+	Server_StartInteract();
+}
+
+void UInteractableComponent::Server_StartInteract_Implementation()
+{
+	StartInteract_Internal();
+}
+
+void UInteractableComponent::StartInteract_Internal()
 {
 	if (LookingObject == nullptr || !IInteractable::Execute_IsInteractable(LookingObject, this))
 	{

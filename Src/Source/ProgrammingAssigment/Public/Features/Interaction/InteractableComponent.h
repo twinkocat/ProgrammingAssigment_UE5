@@ -40,6 +40,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void StartInteract();
 
+	UFUNCTION(Server, Reliable)
+	void Server_StartInteract();
+	
 	UPROPERTY(BlueprintAssignable)
 	FOnInteractAnimation OnInteractAnimation;
 	
@@ -49,7 +52,11 @@ protected:
 
 	bool TryEvaluateInteractable(FHitResult& HitResult, const FVector& TraceStart, const FVector& TraceEnd) const;
 	void ProcessInteractionHit(const FHitResult& HitResult);
+	
+private:
+	void StartInteract_Internal();
 
+protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float TraceLength;
 

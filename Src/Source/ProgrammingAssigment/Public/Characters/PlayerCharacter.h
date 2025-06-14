@@ -32,9 +32,6 @@ public:
 	virtual UInventoryComponent* GetInventoryComponent_Implementation() const override;
 
 protected:
-	UFUNCTION(Server, Reliable)
-	void Interact_Server();
-	
 	UPROPERTY(EditDefaultsOnly, Category="Components")
 	UInteractableComponent* InteractableComponent;
 

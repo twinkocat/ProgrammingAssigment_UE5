@@ -12,7 +12,6 @@
 
 UInventoryComponent::UInventoryComponent()
 {
-
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
@@ -24,104 +23,63 @@ void UInventoryComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 
 void UInventoryComponent::AddItem(const FGameplayTag& ItemTag, const int ItemCount)
 {
-	FInventoryItemData ItemData;
-	
-	
-	if (InventoryDataAsset.LoadSynchronous()->TryGetInventoryData(ItemTag, ItemData))
-	{
-		FAddedItemInfo AddedItemInfo;
-		AddedItemInfo.Name = ItemData.Name;
-		AddedItemInfo.Image = ItemData.ItemImage;
-		AddedItemInfo.Count = ItemCount;
-		OnItemInfoNotified.Broadcast(AddedItemInfo);
-
-		if (FInventoryItemWrapper* ItemWrapper = FindItem_Internal(ItemTag))
-		{
-			const int OldCount = ItemWrapper->Count;
-			ItemWrapper->Count = FMath::Clamp(ItemWrapper->Count + ItemCount, 0, ItemData.MaxInStack);
-			UE_LOG(LogTemp, Log, TEXT("Updated item '%s': %d -> %d"), *ItemWrapper->Item->GetItemName().ToString(), OldCount, ItemWrapper->Count);
-			return;
-		}
-	}
-
-	UInventoryItem* NewItem = UInventoryItem::Create(ItemData);
-	FInventoryItemWrapper NewWrapper;
-	NewWrapper.Tag = ItemData.Tag;
-	NewWrapper.Item = NewItem;
-	NewWrapper.Count = FMath::Clamp(ItemCount, 0, ItemData.MaxInStack);
-	Items.Add(NewWrapper);
-
-	UE_LOG(LogTemp, Log, TEXT("Added new item '%s' with count: %d"), *NewWrapper.Item->GetItemName().ToString(), NewWrapper.Count);
+	Server_AddItem(ItemTag, ItemCount);
 }
 
-void UInventoryComponent::UseItem(const FGameplayTag& ItemTag)
+void UInventoryComponent::NotifyNewItemInfo_Implementation(const FInventoryItemData ItemData, const int ItemCount)
 {
-	if (FInventoryItemWrapper* ItemWrapper = FindItem_Internal(ItemTag))
-	{
-		if (ItemWrapper->Item->IsConsumable())
-		{
-			RemoveItem_Internal(ItemWrapper, 1);
-			UE_LOG(LogTemp, Log, TEXT("Used consumable item: %s, remaining count: %d"), *ItemTag.ToString(), ItemWrapper->Count);
-		}
-		
-		ItemWrapper->Item->OnUse(this);
-	}
+	FAddedItemInfo AddedItemInfo;
+	AddedItemInfo.Name = ItemData.Name;
+	AddedItemInfo.Image = ItemData.ItemImage;
+	AddedItemInfo.Count = ItemCount;
+	OnItemInfoNotified.Broadcast(AddedItemInfo);
+}
+
+void UInventoryComponent::Server_AddItem_Implementation(const FGameplayTag& ItemTag, const int ItemCount)
+{
+	AddItem_Internal(ItemTag, ItemCount);
+	Server_OnInventoryUpdated.Broadcast();
 }
 
 void UInventoryComponent::DropItem(const FGameplayTag& ItemTag, const int ItemCount)
 {
-	if (FInventoryItemWrapper* ItemWrapper = FindItem_Internal(ItemTag))
-	{
-		Server_DropItem(*ItemWrapper);
-		RemoveItem_Internal(ItemWrapper, ItemCount);
-	}
+	Server_DropItem(ItemTag, ItemCount);
 }
 
-void UInventoryComponent::Server_DropItem_Implementation(const FInventoryItemWrapper& ItemWrapper)
+void UInventoryComponent::Server_DropItem_Implementation(const FGameplayTag& ItemTag, const int ItemCount)
 {
-	const AActor* OwnerActor = GetOwner();
-		
-	const FVector Positon = OwnerActor->GetActorLocation();
-	const FRotator Rotator = GetOwner()->GetActorRotation();
-		
-	TArray OffsetDirections = { OwnerActor->GetActorForwardVector(), OwnerActor->GetActorRightVector(), -OwnerActor->GetActorRightVector(), -OwnerActor->GetActorForwardVector() };
-		
-	for (const FVector& Offset : OffsetDirections)
-	{
-		FVector DropLocation = Positon + Offset * DropDistance;
+	DropItem_Internal(ItemTag, ItemCount);
+	Server_OnInventoryUpdated.Broadcast();
+}
 
-		FCollisionQueryParams TraceParams;
-		TraceParams.AddIgnoredActor(OwnerActor);
-		const bool bBlocked = GetWorld()->OverlapAnyTestByChannel(DropLocation,FQuat::Identity, ECC_WorldStatic,FCollisionShape::MakeSphere(DropRadius),TraceParams);
+void UInventoryComponent::UseItem(const FGameplayTag& ItemTag, const int ItemCount)
+{
+	Server_UseItem(ItemTag, ItemCount);
+}
 
-		if (!bBlocked)
-		{
-			APlayersPickUp* DroppedItem = GetWorld()->SpawnActor<APlayersPickUp>(DroppedItemClass, DropLocation, Rotator);
-			DroppedItem->SetupItem(ItemWrapper);
-			OnItemDroppedAnimation.Broadcast();
-			break;
-		}
-	}
+void UInventoryComponent::Server_UseItem_Implementation(const FGameplayTag& ItemTag, const int ItemCount)
+{
+	UserItem_Internal(ItemTag, ItemCount);
+	Server_OnInventoryUpdated.Broadcast();
 }
 
 bool UInventoryComponent::HasItem(const FGameplayTag& ItemTag) const
 {
-	for (const FInventoryItemWrapper& Element : Items)
-	{
-		if (Element.Item && Element.Tag == ItemTag)
-		{
-			return true;
-		}
-	}
-	return false;
+	return FindItem_Internal(ItemTag) != nullptr;
 }
 
 void UInventoryComponent::RemoveItem(const FGameplayTag& ItemTag, const int ItemCount)
 {
-	if (FInventoryItemWrapper* Element = FindItem_Internal(ItemTag))
+	Server_RemoveItem(ItemTag, ItemCount);
+}
+
+void UInventoryComponent::Server_RemoveItem_Implementation(const FGameplayTag& ItemTag, const int ItemCount)
+{
+	if (FInventoryItemWrapper* Item = FindItem_Internal(ItemTag))
 	{
-		RemoveItem_Internal(Element, ItemCount);
+		RemoveItem_Internal(Item, ItemCount);
 	}
+	Server_OnInventoryUpdated.Broadcast();
 }
 
 bool UInventoryComponent::FindItem(const FGameplayTag& ItemTag, FInventoryItemWrapper& OutItem) const
@@ -137,6 +95,83 @@ bool UInventoryComponent::FindItem(const FGameplayTag& ItemTag, FInventoryItemWr
 void UInventoryComponent::BeginPlay()
 {
 	Super::BeginPlay();
+}
+
+void UInventoryComponent::OnRep_Items()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 10, FColor::Red, "OnRep_Items");
+	OnInventoryUpdated.Broadcast();
+}
+
+void UInventoryComponent::AddItem_Internal(const FGameplayTag& ItemTag, const int ItemCount)
+{
+	FInventoryItemData ItemData;
+	
+	if (InventoryDataAsset.LoadSynchronous()->TryGetInventoryData(ItemTag, ItemData))
+	{
+		NotifyNewItemInfo(ItemData, ItemCount);
+
+		if (FInventoryItemWrapper* ItemWrapper = FindItem_Internal(ItemTag))
+		{
+			const int OldCount = ItemWrapper->Count;
+			ItemWrapper->Count = FMath::Clamp(ItemWrapper->Count + ItemCount, 0, ItemData.MaxInStack);
+			UE_LOG(LogTemp, Log, TEXT("Updated item '%s': %d -> %d"), *ItemWrapper->Item->GetItemName().ToString(), OldCount, ItemWrapper->Count);
+		}
+		else
+		{
+			FInventoryItemWrapper NewWrapper;
+			NewWrapper.Tag = ItemData.Tag;
+			NewWrapper.Item = UInventoryItem::Create(ItemData, GetOwner());
+			NewWrapper.Count = FMath::Clamp(ItemCount, 0, ItemData.MaxInStack);
+			Items.Add(NewWrapper);
+			UE_LOG(LogTemp, Log, TEXT("Added new item '%s' with count: %d"), *NewWrapper.Item->GetItemName().ToString(), NewWrapper.Count);
+		}
+	}
+}
+
+void UInventoryComponent::DropItem_Internal(const FGameplayTag& ItemTag, const int ItemCount)
+{
+	if (FInventoryItemWrapper* ItemWrapper = FindItem_Internal(ItemTag))
+	{
+		const AActor* OwnerActor = GetOwner();
+			
+		const FVector Positon = OwnerActor->GetActorLocation();
+		const FRotator Rotator = GetOwner()->GetActorRotation();
+			
+		TArray OffsetDirections = { OwnerActor->GetActorForwardVector(), OwnerActor->GetActorRightVector(), -OwnerActor->GetActorRightVector(), -OwnerActor->GetActorForwardVector() };
+			
+		for (const FVector& Offset : OffsetDirections)
+		{
+			FVector DropLocation = Positon + Offset * DropDistance;
+
+			FCollisionQueryParams TraceParams;
+			TraceParams.AddIgnoredActor(OwnerActor);
+			const bool bBlocked = GetWorld()->OverlapAnyTestByChannel(DropLocation,FQuat::Identity, ECC_WorldStatic,FCollisionShape::MakeSphere(DropRadius),TraceParams);
+
+			if (!bBlocked)
+			{
+				APlayersPickUp* DroppedItem = GetWorld()->SpawnActor<APlayersPickUp>(DroppedItemClass, DropLocation, Rotator);
+				DroppedItem->SetupItem(*ItemWrapper);
+				OnItemDroppedAnimation.Broadcast();
+				break;
+			}
+		}
+		RemoveItem_Internal(ItemWrapper, ItemCount);
+	}
+}
+
+void UInventoryComponent::UserItem_Internal(const FGameplayTag& ItemTag, const int ItemCount)
+{
+	if (FInventoryItemWrapper* ItemWrapper = FindItem_Internal(ItemTag))
+	{
+		ItemWrapper->Item->OnUse(this);
+
+		if (ItemWrapper->Item->IsConsumable())
+		{
+			RemoveItem_Internal(ItemWrapper, ItemCount);
+			UE_LOG(LogTemp, Log, TEXT("Used consumable item: %s, remaining count: %d"), *ItemTag.ToString(), ItemWrapper->Count);
+		}
+	}
 }
 
 FInventoryItemWrapper* UInventoryComponent::FindItem_Internal(const FGameplayTag& ItemTag) const
@@ -159,7 +194,7 @@ void UInventoryComponent::RemoveItem_Internal(FInventoryItemWrapper* Item, const
 		{
 			return Element.Item && Element.Tag == Item->Tag;
 		});
-		
+		UInventoryItem::Dispose(Items[IndexToRemove].Item, GetOwner());
 		Items.RemoveAt(IndexToRemove);
 		UE_LOG(LogTemp, Log, TEXT("Item %s removed from inventory"), *Item->Tag.ToString());
 	}

@@ -23,7 +23,7 @@ public:
 
 	virtual auto GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const -> void override;
 
-	virtual bool StartInteract_Implementation(UInteractableComponent* Component, FInteractionInfo& InteractionInfo) override;
+	virtual bool StartInteract_Implementation(UInteractableComponent* Component, FInteractionAnimationInfo& InteractionInfo) override;
 
 	UFUNCTION(Server, Reliable)
 	void Server_SuccessPickup();
